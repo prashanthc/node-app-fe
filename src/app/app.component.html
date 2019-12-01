@@ -1,3 +1,13 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">Navbar</a>
-</nav>
+<div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark" *ngIf="currentUser">
+        <a class="navbar-brand" href="#">MEAN APP</a>
+        <div class="navbar-nav float-right">
+            <a class="nav-item nav-link" (click)="logout()">Logout</a>
+        </div>
+    </nav>
+    <div [hidden]="!showLoader">
+        <p-progressBar  mode="indeterminate"  [style]="{'height': '5px'}"></p-progressBar>
+    </div>
+    <app-toast></app-toast>
+    <router-outlet></router-outlet>
+</div>

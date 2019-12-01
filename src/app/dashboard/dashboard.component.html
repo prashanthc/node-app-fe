@@ -1,0 +1,65 @@
+<button class="mt-3 ml-3 float-right" [hidden]="userRole !== 'ROLE_EMPLOYEE'" pButton type="button" (click)="display=true;" label="Submit Task"></button>
+<div class="clearfix"></div>
+<p-table [columns]="cols" styleClass="mt-3" [value]="tasks">
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th *ngFor="let col of columns">
+                {{col.header}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+            <td *ngFor="let col of columns">
+                <div *ngIf="col.field=='status'">
+                    <div *ngIf="userRole=='ROLE_EMPLOYEE'">
+                        {{rowData[col.field]}}
+                    </div>
+                    <div *ngIf="userRole=='ROLE_SUPERVISOR'">
+                        <div *ngIf="rowData[col.field]=='AWAITING_APPROVAL'">
+                            <button type="button" pButton label="Approve" (click)="confirmDialog(rowData, 'Approved')"></button>
+                            <button type="button" pButton class="ml-1 ui-button-danger" label="Reject" (click)="confirmDialog(rowData, 'Rejected')"></button>
+                        </div>
+                        <div *ngIf="rowData[col.field]=='Approved'">
+                            <i class="pi pi-check" style="font-size: 1em"></i>{{rowData[col.field]}}
+                        </div>
+                        <div *ngIf="rowData[col.field]=='Rejected'">
+                            <i class="pi pi-times" style="font-size: 1em"></i>{{rowData[col.field]}}
+                        </div>
+                    </div>
+                </div>  
+                <div *ngIf="col.field!='status'">
+                    {{rowData[col.field]}}
+                </div>              
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+        <tr>
+            <td [attr.colspan]="columns.length">
+                No records found
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog header="Submit Task" [(visible)]="display" [modal]="true" [responsive]="true" [style]="{width: '350px', minWidth: '200px'}"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="ui-g ui-fluid">
+        <form [formGroup]="taskForm">
+            <div class="ui-g-12 ui-md-12">
+                <label>Ticket No</label>
+                <input id="input" (keypress)="numberOnly($event)" formControlName="taskId" size="30" pInputText>
+            </div>
+            <div class="ui-g-12 ui-md-12">
+                <label>Comments</label>
+                <textarea rows="5" formControlName="comments" cols="35" pInputTextarea></textarea>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" pButton [disabled]="taskForm.invalid" (click)="submitTask()" label="Submit"></button>
+        <button type="button" pButton (click)="display=false" class="ui-button-secondary" label="Cancel"></button>
+    </p-footer>
+</p-dialog>
+<p-confirmDialog [style]="{width: '30vw'}"></p-confirmDialog>
